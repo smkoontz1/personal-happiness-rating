@@ -1,0 +1,12 @@
+{
+  "name": "PersonalHappinessRating",
+  "displayName": "PersonalHappinessRating",
+  "expo": {
+    "name": "PersonalHappinessRating",
+    "slug": "PersonalHappinessRating",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
