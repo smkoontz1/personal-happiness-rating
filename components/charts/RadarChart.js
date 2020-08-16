@@ -1,10 +1,40 @@
 import React, { Component } from 'react';
+import { Animated } from 'react-native';
 import { Svg, G, Circle, Path, Polyline, Text } from 'react-native-svg';
-import Animated from 'react-native-reanimated';
 
 export default class RadarChart extends Component {
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      dataAnim: new Animated.Value(0),
+      animPercentage: 0.0
+    };
+
+    this.state.dataAnim.addListener((animator) => {
+      this.setState({
+        animPercentage: animator.value / 100
+      });
+    });
+  }
+  
+  componentDidMount() {
+    Animated.timing(this.state.dataAnim, {
+      toValue: 100,
+      duration: 2000,
+      useNativeDriver: true,
+    }).start();
+  }
+  
   render() {
+    const captions = Object.keys(this.props.data[0]);
+    const columns = captions.map((key, i, all) => {
+      return {
+        key,
+        angle: (Math.PI * 2 * i) / all.length
+      };
+    });
+    
     const groups = [];
     const scales = [];
     for (let i = numberOfScales; i > 0; i--) {
@@ -12,57 +42,54 @@ export default class RadarChart extends Component {
     }
     groups.push(<G key="scales">{scales}</G>);
     groups.push(<G key="group-axes">{columns.map(axis())}</G>);
-    groups.push(<G key="groups">{data.map(shape(columns))}</G>);
+    groups.push(<G key="groups">{this.props.data.map(this.shape(columns))}</G>);
     groups.push(<G key="group-captions">{columns.map(caption())}</G>);
-
+    
     return (
       <Svg
-        key="radar-chart"
-        version="1"
-        xmlns="http://www.w3.org/2000/svg"
-        width={chartSize}
-        height={chartSize}
-        viewBox={`0 0 ${chartSize} ${chartSize}`}
+      key="radar-chart"
+      version="1"
+      xmlns="http://www.w3.org/2000/svg"
+      width="350"
+      height="350"
+      viewBox={`0 0 350 350`}
       >
-        <G transform={`translate(${middleOfChart},${middleOfChart})`}>
+        <G transform={`translate(${middleOfGraphic},${middleOfGraphic})`}>
           {groups}
         </G>
       </Svg>
     )
   }
+  
+  shape = columns => (chartData, i) => {
+    const data = chartData;
+    return (
+      <Path
+      key={`shape-${i}`}
+      d={pathDefinition(
+        columns.map(col => {
+          const value = data[col.key] / 10 * this.state.animPercentage;
+          return [
+            polarToX(col.angle, (value * chartSize) / 2),
+            polarToY(col.angle, (value * chartSize) / 2)
+          ];
+        })
+        )}
+        stroke="#5dade2"
+        fill="#5dade2"
+        fillOpacity=".5"
+        />
+        );
+  };
 }
-
-// const data = [
-//   { battery: 0.7, design: 1, useful: 0.9, speed: 0.67, weight: 0.8 },
-//   { battery: 0.6, design: 0.9, useful: 0.8, speed: 0.7, weight: 0.6 }
-// ];
-
-const data = [
-  {
-    diet: .6,
-    physical: .7,
-    finances: .7,
-    friends: .6,
-    family: .5,
-    love: .4,
-    work: .9,
-    leisure: .9
-  },
-  // {
-  //   diet: .6,
-  //   physical: .5,
-  //   finances: .9,
-  //   friends: .4,
-  //   family: .8,
-  //   love: .8,
-  //   work: .7,
-  //   leisure: .4
-  // }
-];
-
-const chartSize = 300;
+    
+const graphicSize = 350;
+const chartSize = 200;
 const numberOfScales = 5;
-const middleOfChart = (chartSize / 2).toFixed(4);
+const middleOfGraphic = (graphicSize / 2).toFixed(4);
+
+const polarToX = (angle, distance) => Math.cos(angle - Math.PI / 2) * distance;
+const polarToY = (angle, distance) => Math.sin(angle - Math.PI / 2) * distance;
 
 const scale = value => (
   <Circle
@@ -75,9 +102,6 @@ const scale = value => (
     strokeWidth="0.2" />
 );
 
-const polarToX = (angle, distance) => Math.cos(angle - Math.PI / 2) * distance;
-const polarToY = (angle, distance) => Math.sin(angle - Math.PI / 2) * distance;
-
 const pathDefinition = points => {
   let d = 'M' + points[0][0].toFixed(4) + ',' + points[0][1].toFixed(4);
   for (let i = 1; i < points.length; i++) {
@@ -85,27 +109,6 @@ const pathDefinition = points => {
   }
 
   return d + 'z';
-};
-
-const shape = columns => (chartData, i) => {
-  const data = chartData;
-  return (
-    <Path
-      key={`shape-${i}`}
-      d={pathDefinition(
-        columns.map(col => {
-          const value = data[col.key];
-          return [
-            polarToX(col.angle, (value * chartSize) / 2),
-            polarToY(col.angle, (value * chartSize) / 2)
-          ];
-        })
-      )}
-      stroke="#5dade2"
-      fill="#5dade2"
-      fillOpacity=".5"
-    />
-  );
 };
 
 const points = points => {
@@ -129,8 +132,9 @@ const axis = () => (col, i) => (
 const caption = () => col => (
   <Text
     key={`caption-of-${col.key}`}
-    x={polarToX(col.angle, (chartSize / 2) * 0.95).toFixed(4)}
-    y={polarToY(col.angle, (chartSize / 2) * 0.95).toFixed(4)}
+    textAnchor="middle"
+    x={polarToX(col.angle, (chartSize / 2) * 1.3).toFixed(4)}
+    y={polarToY(col.angle, (chartSize / 2) * 1.3).toFixed(4)}
     dy={10 / 2}
     fill="#444"
     fontWeight="400"
@@ -140,10 +144,3 @@ const caption = () => col => (
   </Text>
 )
 
-const captions = Object.keys(data[0]);
-const columns = captions.map((key, i, all) => {
-  return {
-    key,
-    angle: (Math.PI * 2 * i) / all.length
-  };
-});
