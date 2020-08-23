@@ -8,6 +8,8 @@ const MainScreen = ({ navigation }) => {
 	const [ratingData, setRatingData] = useState([]);
 	const [dataReady, setDataReady] = useState(false);
 
+	// Main screen change test
+
 	useEffect(
 		() => {
 			if (ratingData.length <= 0) {
