@@ -1,11 +1,18 @@
+/**********************************************************
+ *
+ *		This code was modified from: 
+ *		https://itnext.io/react-svg-radar-chart-a89d15760e8
+ *
+ **********************************************************/
+
 import React, { Component } from 'react';
 import { Animated } from 'react-native';
-import { Svg, G, Circle, Path, Polyline, Text } from 'react-native-svg';
+import { Svg, G, Circle, Path, Polyline, Text, Rect } from 'react-native-svg';
 
 export default class RadarChart extends Component {
   constructor(props) {
-    super(props);
-
+		super(props);
+		
     this.state = {
       dataAnim: new Animated.Value(0),
       animPercentage: 0.0
@@ -21,10 +28,10 @@ export default class RadarChart extends Component {
   componentDidMount() {
     Animated.timing(this.state.dataAnim, {
       toValue: 100,
-      duration: 2000,
+      duration: 1500,
       useNativeDriver: true,
     }).start();
-  }
+	}
   
   render() {
     const captions = Object.keys(this.props.data[0]);
@@ -33,17 +40,22 @@ export default class RadarChart extends Component {
         key,
         angle: (Math.PI * 2 * i) / all.length
       };
-    });
+		});
     
+    const captionElements = columns.map(this.caption());
+    const captionBoxes = captionElements.map(this.captionBox());
+
     const groups = [];
     const scales = [];
     for (let i = numberOfScales; i > 0; i--) {
       scales.push(scale(i));
     }
+
     groups.push(<G key="scales">{scales}</G>);
     groups.push(<G key="group-axes">{columns.map(axis())}</G>);
     groups.push(<G key="groups">{this.props.data.map(this.shape(columns))}</G>);
-    groups.push(<G key="group-captions">{columns.map(caption())}</G>);
+    groups.push(<G key="group-captions">{columns.map(this.caption())}</G>);
+    groups.push(<G key="group-caption-boxes">{captionBoxes}</G>);
     
     return (
       <Svg
@@ -62,24 +74,55 @@ export default class RadarChart extends Component {
   }
   
   shape = columns => (chartData, i) => {
-    const data = chartData;
+		const data = chartData;
     return (
       <Path
       key={`shape-${i}`}
       d={pathDefinition(
         columns.map(col => {
-          const value = data[col.key] / 10 * this.state.animPercentage;
+					const value = data[col.key] / 10 * this.state.animPercentage;
           return [
             polarToX(col.angle, (value * chartSize) / 2),
             polarToY(col.angle, (value * chartSize) / 2)
           ];
         })
         )}
-        stroke="#5dade2"
-        fill="#5dade2"
-        fillOpacity=".5"
-        />
-        );
+			stroke="#5dade2"
+			fill="#5dade2"
+			fillOpacity=".5"
+      />
+    );
+  };
+  
+  caption = () => col => (
+    <Text
+      key={`caption-of-${col.key}`}
+      textAnchor="middle"
+      x={polarToX(col.angle, (chartSize / 2) * 1.3).toFixed(4)}
+      y={polarToY(col.angle, (chartSize / 2) * 1.3).toFixed(4)}
+      dy={10 / 2}
+      fill="#444"
+      fontWeight="400"
+      textShadow="1px 1px 0 #fff"
+      >
+      {col.key}
+    </Text>
+  );
+  
+  captionBox = () => element => {
+    return (
+      <Rect
+        key={`box-for-${element.key}`}
+        x={element.props.x - 30}
+        y={element.props.y - 10}
+        width="60"
+        height="25"
+        fill="none"
+        // onPress={() =>
+        //   this.props.navigate(element.props.children)
+        // }
+      />
+    );
   };
 }
     
@@ -115,7 +158,7 @@ const points = points => {
   return points
     .map(point => point[0].toFixed(4) + ',' + point[1].toFixed(4))
     .join(' ');
-}
+};
 
 const axis = () => (col, i) => (
   <Polyline
@@ -127,20 +170,4 @@ const axis = () => (col, i) => (
     stroke="#555"
     strokeWidth=".2"
   />
-)
-
-const caption = () => col => (
-  <Text
-    key={`caption-of-${col.key}`}
-    textAnchor="middle"
-    x={polarToX(col.angle, (chartSize / 2) * 1.3).toFixed(4)}
-    y={polarToY(col.angle, (chartSize / 2) * 1.3).toFixed(4)}
-    dy={10 / 2}
-    fill="#444"
-    fontWeight="400"
-    textShadow="1px 1px 0 #fff"
-  >
-    {col.key.toUpperCase()}
-  </Text>
-)
-
+);

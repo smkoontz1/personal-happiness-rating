@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-export default class SecondaryScreen extends Component {
+export default class FriendsScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.title}>Secondary Screen</Text>
+                <Text style={styles.title}>Friends</Text>
             </View>
         );
     }
