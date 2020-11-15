@@ -37,8 +37,8 @@ const SubmissionScreen = ({ navigation }) => {
 										console.log(error);
 										alert('Something went wrong.');
 									}
-									);
-								},
+								);
+							},
 							(tx, error) => {
 								console.log(error);
 								alert('Something went wrong.');

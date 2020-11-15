@@ -24,8 +24,9 @@ const RatingEntryScreen = (props) => {
     appContext.db.transaction(tx => {
       tx.executeSql(
         "SELECT * FROM rating_type WHERE type = ?;",
-        [props.type],
+        [props.ratingCategory],
         (tx, results) => {
+					console.log(results)
           if (results.rows._array.length <= 0 || results.rows._array.length > 1) {
             alert('Something went wrong.');
           }
@@ -41,7 +42,7 @@ const RatingEntryScreen = (props) => {
   });
 
   return (
-    <RatingEntry title={props.type} onClick={handleRatingSubmit.bind(this)} />
+    <RatingEntry ratingCategory={props.ratingCategory} onClick={handleRatingSubmit.bind(this)} />
   );
 };
 

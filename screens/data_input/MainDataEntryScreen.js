@@ -12,28 +12,28 @@ export default class MainDataEntryScreen extends Component {
       <DataEntryProvider>
         <DataEntryStack.Navigator>
           <DataEntryStack.Screen name="Physical Entry">
-            {props => <RatingEntryScreen {...props} type="Physical" nextScreen="Diet Entry" />}
+            {props => <RatingEntryScreen {...props} ratingCategory="Physical" nextScreen="Diet Entry" />}
           </DataEntryStack.Screen>
           <DataEntryStack.Screen name="Diet Entry">
-            {props => <RatingEntryScreen {...props} type="Diet" nextScreen="Finances Entry" />}
+            {props => <RatingEntryScreen {...props} ratingCategory="Diet" nextScreen="Finances Entry" />}
           </DataEntryStack.Screen>
           <DataEntryStack.Screen name="Finances Entry">
-            {props => <RatingEntryScreen {...props} type="Finances" nextScreen="Friends Entry" />}
+            {props => <RatingEntryScreen {...props} ratingCategory="Finances" nextScreen="Friends Entry" />}
           </DataEntryStack.Screen>
           <DataEntryStack.Screen name="Friends Entry">
-            {props => <RatingEntryScreen {...props} type="Friends" nextScreen="Family Entry" />}
+            {props => <RatingEntryScreen {...props} ratingCategory="Friends" nextScreen="Family Entry" />}
           </DataEntryStack.Screen>
           <DataEntryStack.Screen name="Family Entry">
-            {props => <RatingEntryScreen {...props} type="Family" nextScreen="Love Entry" />}
+            {props => <RatingEntryScreen {...props} ratingCategory="Family" nextScreen="Love Entry" />}
           </DataEntryStack.Screen>
           <DataEntryStack.Screen name="Love Entry">
-            {props => <RatingEntryScreen {...props} type="Love" nextScreen="Work Entry" />}
+            {props => <RatingEntryScreen {...props} ratingCategory="Love" nextScreen="Work Entry" />}
           </DataEntryStack.Screen>
           <DataEntryStack.Screen name="Work Entry">
-            {props => <RatingEntryScreen {...props} type="Work" nextScreen="Leisure Entry" />}
+            {props => <RatingEntryScreen {...props} ratingCategory="Work" nextScreen="Leisure Entry" />}
           </DataEntryStack.Screen>
           <DataEntryStack.Screen name="Leisure Entry">
-            {props => <RatingEntryScreen {...props} type="Leisure" nextScreen="Submitting" />}
+            {props => <RatingEntryScreen {...props} ratingCategory="Leisure" nextScreen="Submitting" />}
           </DataEntryStack.Screen>
           <DataEntryStack.Screen name="Submitting" component={SubmissionScreen} />
         </DataEntryStack.Navigator>

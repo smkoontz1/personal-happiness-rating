@@ -1,7 +1,8 @@
 class Rating {
-  constructor(ratingTypeId, value) {
+  constructor(ratingTypeId, value, comment) {
     this.ratingTypeId = ratingTypeId;
-    this.value = value;
+		this.value = value;
+		this.comment = comment;
   }
 }
 
